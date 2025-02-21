@@ -1,0 +1,7 @@
+Dataset,Method,Frac_Labeled,Best_Accuracy,Best_Param
+KSC,l1_res,0.0001,0.5682,0.0001
+KSC,l1_res,0.0005,0.5539999999999999,1e-06
+KSC,l1_res,0.005,0.62,0.0001
+KSC,l1_res,0.01,0.6762,0.0001
+KSC,l1_res,0.05,0.7862,0.0001
+KSC,l1_res,0.1,0.8144,0.0001

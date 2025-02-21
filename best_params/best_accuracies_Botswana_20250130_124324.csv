@@ -1,0 +1,3 @@
+Dataset,Method,Best_Accuracy,Best_Param
+Botswana,R,0.7200000000000002,0.01
+Botswana,R_res,0.6414,0.1

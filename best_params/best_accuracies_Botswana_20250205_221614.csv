@@ -1,0 +1,2 @@
+Dataset,Method,Best_Accuracy,Best_Param,Frac_Labeled
+Botswana,l1_res,0.40659999999999996,0.0001,0.001

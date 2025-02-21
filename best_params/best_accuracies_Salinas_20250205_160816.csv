@@ -1,0 +1,7 @@
+Dataset,Method,Frac_Labeled,Best_Accuracy,Best_Param
+Salinas,l1_res,0.0001,0.6916,0.0001
+Salinas,l1_res,0.0005,0.7267999999999999,0.0001
+Salinas,l1_res,0.005,0.8344,1e-05
+Salinas,l1_res,0.01,0.8371999999999999,0.0001
+Salinas,l1_res,0.05,0.8572000000000002,1e-05
+Salinas,l1_res,0.1,0.8724000000000001,1e-05

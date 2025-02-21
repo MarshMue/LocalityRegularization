@@ -1,0 +1,2 @@
+Dataset,Method,Best_Accuracy,Best_Param,Frac_Labeled
+Indian_Pines,l1_res,0.33140000000000003,0.001,0.001

@@ -1,0 +1,7 @@
+Dataset,Method,Frac_Labeled,Best_Accuracy,Best_Param
+Pavia_Centre,l1_res,0.0001,0.7837999999999999,0.0001
+Pavia_Centre,l1_res,0.0005,0.6922000000000001,0.0001
+Pavia_Centre,l1_res,0.005,0.6769999999999999,1e-06
+Pavia_Centre,l1_res,0.01,0.6438000000000001,1e-07
+Pavia_Centre,l1_res,0.05,0.5626000000000001,1e-05
+Pavia_Centre,l1_res,0.1,0.5334,1e-05

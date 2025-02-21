@@ -1,0 +1,3 @@
+Dataset,Method,Best_Accuracy,Best_Param
+Pavia_Centre,R,0.9518,0.01
+Pavia_Centre,R_res,0.9454,0.1

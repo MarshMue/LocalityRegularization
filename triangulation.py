@@ -8,6 +8,7 @@ cvxopt.solvers.options["abstol"] = np.finfo(float).eps*2
 cvxopt.solvers.options["feastol"] = 1e-8
 cvxopt.solvers.options["maxiters"] = 100
 
+
 def exactLP(X, p, tol=None):
     """
     Solves the exact problem (E) using an interior point solver
@@ -43,13 +44,14 @@ def exactLP(X, p, tol=None):
     if tol is None:
         sorted_weights = np.sort(solved_weights.reshape(-1))
         # handle situations where small entries may be slightly negative
-        sorted_weights[sorted_weights < 0.0] = sorted_weights[sorted_weights > 0.0].min()
+        sorted_weights[sorted_weights <
+                       0.0] = sorted_weights[sorted_weights > 0.0].min()
         gap = np.log(sorted_weights[1:]) - np.log(sorted_weights[:-1])
         max_gap = gap.argmax()
         # check that there is a significant gap, otherwise threshold at 0 (all values are away from 0)
         median_gap = np.median(gap)
         MAD = np.median(np.abs(gap - median_gap))
-        if gap.max() < median_gap + 3 * 1.4826* MAD:
+        if gap.max() < median_gap + 3 * 1.4826 * MAD:
             tol = 0.0
         else:
             tol = sorted_weights[max_gap]
@@ -81,7 +83,7 @@ def cvxLP(X, p, tol=None, return_objective=False):
     c = matrix(1.0, (d+1, 1))
     c[:d] = p
 
-    fX = matrix(0.0, (n,1))
+    fX = matrix(0.0, (n, 1))
 
     for i in range(n):
         fX[i] = X[i] @ X[i].T
@@ -90,19 +92,19 @@ def cvxLP(X, p, tol=None, return_objective=False):
 
     z = np.array(sol['z']).reshape(-1)
 
-
     # use weight on smaller end of the largest log-gap
     if tol is None:
         sorted_dual = np.sort(z)
         zero_idx = sorted_dual == 0
-        sorted_dual[sorted_dual == 0] = sorted_dual[np.logical_not(zero_idx)].min()
+        sorted_dual[sorted_dual ==
+                    0] = sorted_dual[np.logical_not(zero_idx)].min()
         gap = np.log(sorted_dual[1:]) - np.log(sorted_dual[:-1])
         max_gap = gap.argmax()
 
         # if max is within 3 MAD of median, consider all weights to be non-zero
         median_gap = np.median(gap)
         MAD = np.median(np.abs(gap - median_gap))
-        if gap.max() < median_gap + 3 * 1.4826* MAD:
+        if gap.max() < median_gap + 3 * 1.4826 * MAD:
             tol = 0.0
         else:
             tol = sorted_dual[max_gap]
@@ -140,17 +142,13 @@ def customCVX(A, p, rho, tol=None, verbose=False):
 
     X = A
 
-
-
     A = cvxopt.matrix(A.T)
-
 
     d, n = A.size
 
     h = cvxopt.matrix(np.zeros(n))
 
-
-    def P(u, v, alpha = 1.0, beta = 0.0 ):
+    def P(u, v, alpha=1.0, beta=0.0):
         """
         v := alpha * A * A.T * u + beta * v
         """
@@ -159,7 +157,6 @@ def customCVX(A, p, rho, tol=None, verbose=False):
         tmp = A*u
         blas.gemv(A.T, tmp, v, alpha=alpha, beta=beta)
 
-
     def G(u, v, alpha=1.0, beta=0.0, trans='N'):
         """
             v := alpha*-I * u + beta * v  (trans = 'N' or 'T')
@@ -167,8 +164,6 @@ def customCVX(A, p, rho, tol=None, verbose=False):
 
         blas.scal(beta, v)
         blas.axpy(u, v, alpha=-alpha)
-
-
 
     # Customized solver for the KKT system
     # see overleaf for details
@@ -208,7 +203,7 @@ def customCVX(A, p, rho, tol=None, verbose=False):
         S[::d+1] -= 1.0
 
         # # compute cholesky - doesn't seem to be any faster
-        ipiv = matrix(0, (n, 1), tc='i')
+        ipiv = matrix(0, (d, 1), tc='i')
         lapack.sytrf(S, ipiv)
 
         def g(x, y, z):
@@ -223,16 +218,17 @@ def customCVX(A, p, rho, tol=None, verbose=False):
             lapack.sytrs(S, ipiv, v)
 
             # compute u_x
-            u_x = cvxopt.mul(Dvec, A.T*v - sum(cvxopt.mul(Dvec, (A.T*v)))*ones / TrD - (x + cvxopt.div(z, Dvec) - (y + sum(cvxopt.mul(Dvec, x) + z)) / TrD * ones))
+            u_x = cvxopt.mul(Dvec, A.T*v - sum(cvxopt.mul(Dvec, (A.T*v)))*ones / TrD - (
+                x + cvxopt.div(z, Dvec) - (y + sum(cvxopt.mul(Dvec, x) + z)) / TrD * ones))
 
             # compute u_y
-            blas.axpy(cvxopt.matrix(sum(cvxopt.mul(Dvec, (A.T*(A*u_x))) - cvxopt.mul(Dvec, x) - z)), y, alpha=-1.0)
+            blas.axpy(cvxopt.matrix(
+                sum(cvxopt.mul(Dvec, (A.T*(A*u_x))) - cvxopt.mul(Dvec, x) - z)), y, alpha=-1.0)
             # blas.scal(1/TrD, y)
             y /= TrD
 
             # compute u_z
             blas.swap(x, u_x)
-
 
             blas.axpy(x, z)
             z[:] = cvxopt.div(z, -Dvecsqrt)
@@ -255,7 +251,8 @@ def customCVX(A, p, rho, tol=None, verbose=False):
 
     # solve problem
     initvals = {'x': cvxopt.matrix(np.ones((n, 1))/n)}
-    sol = solvers.qp(P=P, q=q, G=G, h=h, A=A_, b=b_, kktsolver = Fkkt, initvals=initvals)
+    sol = solvers.qp(P=P, q=q, G=G, h=h, A=A_, b=b_,
+                     kktsolver=Fkkt, initvals=initvals)
 
     # reset params
     cvxopt.solvers.options["feastol"] = feastol
@@ -277,13 +274,14 @@ def customCVX(A, p, rho, tol=None, verbose=False):
     if tol is None:
         sorted_weights = np.sort(solved_weights.reshape(-1))
         # handle situations where small entries may be slightly negative
-        sorted_weights[sorted_weights < 0.0] = sorted_weights[sorted_weights > 0.0].min()
+        sorted_weights[sorted_weights <
+                       0.0] = sorted_weights[sorted_weights > 0.0].min()
         gap = np.log(sorted_weights[1:]) - np.log(sorted_weights[:-1])
         max_gap = gap.argmax()
         # check that there is a significant gap, otherwise threshold at 0 (all values are away from 0)
         median_gap = np.median(gap)
         MAD = np.median(np.abs(gap - median_gap))
-        if gap.max() < median_gap + 3 * 1.4826* MAD:
+        if gap.max() < median_gap + 3 * 1.4826 * MAD:
             tol = 0.0
         else:
             tol = sorted_weights[max_gap]
@@ -316,6 +314,7 @@ def exactLPSimplex(X, p):
     weights = w[support]
     return support, weights
 
+
 def convexHullLPSimplex(X, p):
     """
     Solves the convex hull LP using the simplex method
@@ -337,9 +336,10 @@ def convexHullLPSimplex(X, p):
 
     b_ub = np.linalg.norm(X, axis=1)**2
 
-    sol = linprog(c=-c, A_ub=A_ub, b_ub=b_ub, bounds=(None, None), method="highs")
+    sol = linprog(c=-c, A_ub=A_ub, b_ub=b_ub,
+                  bounds=(None, None), method="highs")
 
     z = sol['slack']
 
-    support = np.arange(n)[z==0]
+    support = np.arange(n)[z == 0]
     return support
